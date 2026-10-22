@@ -1,5 +1,7 @@
 # TextMask
 
+[![Tests](https://github.com/andreyqwerty365-netizen/textmask/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/andreyqwerty365-netizen/textmask/actions/workflows/test.yml)
+
 Редактор подготовки обычного текста к передаче в ИИ. Заменяет поддерживаемые контакты и собственные точные строки на метки, сохраняя остальные символы и абзацы.
 
 **HTML · CSS · JavaScript · Node.js 24 · Без зависимостей · [MIT](LICENSE)**

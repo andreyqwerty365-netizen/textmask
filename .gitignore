@@ -1,0 +1,14 @@
+node_modules/
+work/
+outputs/
+coverage/
+.env
+.env.*
+!.env.example
+.agent-base/
+.codex/
+.agents/
+AGENTS.md
+*.log
+.DS_Store
+Thumbs.db

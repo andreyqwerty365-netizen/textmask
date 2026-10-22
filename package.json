@@ -1,0 +1,24 @@
+{
+  "name": "textmask",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Локальная маскировка контактов и точных строк без отправки текста",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "check": "node --check server.js && node --check src/mask.js && node --check src/app.js"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreyqwerty365-netizen/textmask.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andreyqwerty365-netizen/textmask/issues"
+  },
+  "homepage": "https://github.com/andreyqwerty365-netizen/textmask#readme"
+}

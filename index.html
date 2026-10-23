@@ -12,20 +12,26 @@
 <body>
   <a id="skip-source" class="skip-link" href="#source">Перейти к исходнику</a>
   <header class="app-header">
-    <div class="header-inner"><h1>TextMask</h1><button id="clear" class="button button-quiet" type="button">Очистить</button></div>
+    <div class="header-inner"><h1>TextMask</h1><div class="header-actions"><button id="open-file" class="button" type="button">Открыть файл</button><button id="clear" class="button button-quiet" type="button">Очистить</button></div></div>
   </header>
   <main class="page">
-    <div class="editor-caption">Email и российские телефоны с +7 или 8</div>
+    <input id="file-input" type="file" accept=".txt,.md,.docx,.pdf,.png,.jpg,.jpeg" hidden>
+    <section id="drop-zone" class="drop-zone" aria-label="Загрузка документа"><div><strong>Текст из документа</strong><span class="drop-desktop">Перетащите сюда один файл или выберите на устройстве</span><span class="drop-mobile">Выберите файл на устройстве</span></div><button id="choose-file" class="button" type="button">Выбрать файл</button></section>
+    <details id="file-settings" class="file-settings"><summary>Форматы и OCR <span>· до 20 МиБ</span></summary><div class="file-options"><span>TXT/MD, DOCX, PDF, PNG/JPEG · PDF до 30 страниц</span><label><input id="force-ocr" type="checkbox"> OCR всех страниц PDF</label></div></details>
+    <p id="file-info" class="file-info" hidden></p>
+    <div id="file-progress" class="file-progress" hidden><div class="progress-content"><span id="file-status" role="status" aria-live="polite"></span><span id="file-context" class="progress-context"></span><progress id="file-meter" max="100" aria-label="Прогресс текущего этапа"></progress><span class="progress-hint">Исходник появится после чтения всего файла.</span></div><button id="cancel-file" class="button button-small" type="button">Отменить чтение</button></div>
+    <fieldset class="mask-options"><legend>Что скрыть</legend><label><input id="mask-email" type="checkbox" checked> Email</label><label><input id="mask-phone" type="checkbox" checked> Телефоны РФ</label><label><input id="mask-url" type="checkbox"> Ссылки</label><label><input id="mask-ip" type="checkbox"> IPv4</label><span>Имена и другие данные — в дополнительных заменах.</span></fieldset>
     <div id="view-tabs" class="view-tabs" role="tablist" aria-label="Редактор текста">
       <button id="source-tab" type="button" role="tab" aria-controls="source-panel" aria-selected="true">Исходник</button>
       <button id="result-tab" type="button" role="tab" aria-controls="result-panel" aria-selected="false" tabindex="-1">Результат</button>
     </div>
+    <div id="review-nav" class="review-nav" hidden><span id="review-position" role="status" aria-live="polite">Выберите замену</span><div><button id="review-prev" type="button" class="button button-small" aria-label="Предыдущая замена">←</button><button id="review-next" type="button" class="button button-small" aria-label="Следующая замена">→</button></div></div>
     <div class="workspace">
       <section id="source-panel" class="pane source-pane" aria-labelledby="source-title">
         <div class="pane-heading"><h2 id="source-title"><label for="source">Исходник</label></h2><button id="edit-source" class="button button-small" type="button" hidden>Редактировать</button></div>
         <form id="mask-form" autocomplete="off" novalidate>
           <div class="document-surface">
-            <textarea id="source" class="document source-editor" placeholder="Вставьте текст для маскирования…" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="source-length error"></textarea>
+            <textarea id="source" class="document source-editor" placeholder="Вставьте текст или откройте файл…" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="source-length error"></textarea>
             <div id="empty-example" class="empty-example"><button id="demo" class="text-button" type="button">Вставить пример</button></div>
             <pre id="source-preview" class="document source-preview" tabindex="0" aria-label="Исходник: выделенные фрагменты и их метки" hidden></pre>
           </div>
@@ -48,22 +54,23 @@
         <label class="sr-only" for="result">Текст после маскирования</label>
         <textarea id="result" class="document result-editor" readonly placeholder="Здесь появится текст с метками." spellcheck="false" autocomplete="off" aria-describedby="summary"></textarea>
         <div id="replacement-summary" class="replacement-summary" hidden>
-          <dl class="type-counts" aria-label="Количество замен по типам"><div><dt>Email</dt><dd id="count-email">0</dd></div><div><dt>Телефоны</dt><dd id="count-phone">0</dd></div><div><dt>Строки</dt><dd id="count-text">0</dd></div></dl>
+          <dl class="type-counts" aria-label="Количество замен по типам"><div><dt>Email</dt><dd id="count-email">0</dd></div><div><dt>Телефоны</dt><dd id="count-phone">0</dd></div><div><dt>Ссылки</dt><dd id="count-url">0</dd></div><div><dt>IPv4</dt><dd id="count-ip">0</dd></div><div><dt>Строки</dt><dd id="count-text">0</dd></div></dl>
         </div>
         <p id="summary" class="summary">Сначала добавьте исходник и нажмите «Маскировать».</p>
         <p id="merge-note" class="merge-note" hidden></p>
         <p id="review-note" class="review-note" hidden>Имена и адреса проверьте вручную.</p>
-        <div class="pane-actions result-actions"><button id="copy" type="button" class="button button-primary" disabled>Скопировать результат</button></div>
+        <div class="pane-actions result-actions"><button id="copy" type="button" class="button button-primary" disabled>Скопировать результат</button><button id="download" type="button" class="button" disabled>Скачать TXT</button></div>
         <p id="copy-help" class="copy-help" hidden>Автокопирование недоступно. Результат выделен: нажмите Ctrl+C или ⌘C, затем вставьте текст в нужное место.</p>
       </section>
     </div>
+    <details id="review-details" class="review-details" hidden><summary>Проверить замены <span id="review-total"></span></summary><p class="review-hint">Нажмите на метку, чтобы увидеть исходный фрагмент. Стрелки над редактором переходят между заменами.</p><div id="review-list" class="review-list"></div><div id="review-pages" class="review-pages" hidden><button id="review-page-prev" class="button button-small" type="button">Назад</button><span id="review-page-label"></span><button id="review-page-next" class="button button-small" type="button">Далее</button></div></details>
     <p id="status" class="status" role="status" aria-live="polite"></p>
     <details id="help-details" class="help-details">
       <summary>Правила и ограничения</summary>
       <div class="help-content">
-        <div><h3>Контакты</h3><p>Распространённые email с латинской локальной частью и доменом. Российские телефоны: 11 цифр, начало +7 или 8, пробелы, скобки вокруг кода и дефисы. Например: +7 (999) 123-45-67. Повторения одного контакта получают одинаковую метку.</p></div>
-        <div><h3>Точные строки и пересечения</h3><p>До 100 непустых уникальных строк и 10 000 символов. Пустые и повторные правила пропускаются. Пересекающиеся совпадения объединяются целиком, связанные повторы получают общую метку. Приоритет: email → телефон → ручная строка.</p></div>
-        <div><h3>Что проверить</h3><p>До 100 000 символов исходника и 20 000 найденных совпадений. Имена, адреса, паспорта, карты и редкие форматы автоматически не находятся. Файлы не поддерживаются. Полное обезличивание не гарантируется.</p><p>Текст остаётся в памяти страницы и очищается после перезагрузки. При копировании он попадает в системный буфер обмена.</p></div>
+        <div><h3>Правила поиска</h3><p>Email с латинской локальной частью и доменом. Российские телефоны: 11 цифр, начало +7 или 8. Ссылки: http://, https:// и www. IPv4: четыре числа 0–255 без ведущих нулей. Ссылки и IPv4 включаются отдельно; IPv6, ФИО и номера документов автоматически не маскируются. Повторы получают общую метку.</p></div>
+        <div><h3>Точные строки и проверка</h3><p>До 100 непустых уникальных строк и 10 000 символов. Пустые и повторные правила пропускаются. Пересечения скрываются целиком, связанные повторы получают общую метку. Приоритет: ссылка → email → телефон → IPv4 → строка. Нажмите на метку в исходнике или списке «Проверить замены»; стрелки переходят между всеми найденными фрагментами.</p></div>
+        <div><h3>Файлы и проверка</h3><p>До 100 000 символов текста и 20 000 совпадений. TXT/MD — UTF-8. Из DOCX извлекается основной текст; комментарии и скрытые данные не входят в результат. PDF без текстового слоя и PNG/JPEG распознаются локально на русском и английском. OCR всех страниц пригодится для смешанного PDF. Распознавание и порядок текста могут содержать ошибки: проверьте их перед маскированием. Результат — отдельный TXT без оформления исходника.</p><p>Имена, адреса и документы автоматически не находятся. Полное обезличивание не гарантируется. Текст остаётся в памяти страницы, после перезагрузки поля очищаются.</p></div>
       </div>
     </details>
     <noscript><p class="error">Для маскирования включите JavaScript.</p></noscript>

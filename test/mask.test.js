@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { maskText } from '../src/mask.js';
 
 test('пустой ввод возвращает пустой результат и нулевые счётчики', () => {
-  assert.deepEqual(maskText(''), { text: '', matches: [], counts: { email: 0, phone: 0, text: 0, total: 0, unique: 0 }, merged: 0 });
+  assert.deepEqual(maskText(''), { text: '', matches: [], counts: { email: 0, phone: 0, url: 0, ip: 0, text: 0, total: 0, unique: 0 }, merged: 0 });
 });
 test('пробелы и текст без совпадений сохраняются буквально', () => {
   assert.equal(maskText('  Привет\nмир!\t').text, '  Привет\nмир!\t');

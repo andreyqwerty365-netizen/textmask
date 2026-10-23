@@ -38,6 +38,7 @@ async function openApp() {
     const element = new Element();
     element.hidden = /\bhidden\b/.test(match[0]);
     element.disabled = /\bdisabled\b/.test(match[0]);
+    element.checked = /\bchecked\b/.test(match[0]);
     elements.set(match[1], element);
   }
   document = Object.assign(new Element(), {

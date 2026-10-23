@@ -1,0 +1,52 @@
+[
+  {
+    "url": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.4.299.tgz",
+    "name": "pdfjs-dist",
+    "repository": "git+https://github.com/mozilla/pdf.js.git",
+    "license": "Apache-2.0",
+    "version": "6.4.299",
+    "integrity": "sha512-AVl138zALtfaAPvADulE0PZThbYzCBS79nL4pOSL/6Sm/4AH5A21BD9VHt97OlCuzJuCpmeZtAtkinisF4Vb1g=="
+  },
+  {
+    "url": "https://registry.npmjs.org/tesseract.js-core/-/tesseract.js-core-6.1.2.tgz",
+    "name": "tesseract.js-core",
+    "repository": "git+https://github.com/naptha/tesseract.js-core.git",
+    "license": "Apache-2.0",
+    "version": "6.1.2",
+    "integrity": "sha512-pv4GjmramjdObhDyR1q85Td8X60Puu/lGQn7Kw2id05LLgHhAcWgnz6xSdMCSxBMWjQDmMyDXPTC2aqADdpiow=="
+  },
+  {
+    "url": "https://registry.npmjs.org/tesseract.js/-/tesseract.js-7.0.0.tgz",
+    "name": "tesseract.js",
+    "repository": "git+https://github.com/naptha/tesseract.js.git",
+    "license": "Apache-2.0",
+    "version": "7.0.0",
+    "integrity": "sha512-exPBkd+z+wM1BuMkx/Bjv43OeLBxhL5kKWsz/9JY+DXcXdiBjiAch0V49QR3oAJqCaL5qURE0vx9Eo+G5YE7mA=="
+  },
+  {
+    "url": "https://registry.npmjs.org/mammoth/-/mammoth-1.13.0.tgz",
+    "name": "mammoth",
+    "repository": "git+https://github.com/mwilliamson/mammoth.js.git",
+    "license": "BSD-2-Clause",
+    "version": "1.13.0",
+    "integrity": "sha512-2cawcYFcP7ISfXbBcL9lmVgTNWo88v/52ND1gnywHtVT/pX0//puPnf0iMPV9ZgmuvNOE+zkIhDgZ9M2c2dDDg=="
+  },
+  {
+    "name": "rus.traineddata",
+    "sha256": "E16E5E036CCE1D9EC2B00063CF8B54472625B9E14D893A169E2B0DEDEB4DF225",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/rus.traineddata",
+    "commit": "87416418657359cb625c412a48b6e1d6d41c29bd"
+  },
+  {
+    "name": "eng.traineddata",
+    "sha256": "7D4322BD2A7749724879683FC3912CB542F19906C83BCC1A52132556427170B2",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/eng.traineddata",
+    "commit": "87416418657359cb625c412a48b6e1d6d41c29bd"
+  },
+  {
+    "name": "LICENSE",
+    "sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/LICENSE",
+    "commit": "87416418657359cb625c412a48b6e1d6d41c29bd"
+  }
+]

@@ -27,5 +27,16 @@ jobs:
         with:
           node-version: 24
           package-manager-cache: false
-      - name: Run tests
+      - name: Test logic, files, HTTP and portable lifecycle
         run: npm test
+      - name: Check syntax
+        run: npm run check
+      - name: Build Windows portable ZIP
+        if: runner.os == 'Windows'
+        run: npm run build:windows
+      - name: Test packaged Windows launcher
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Expand-Archive -LiteralPath dist/TextMask-2.0.0-windows-x64.zip -DestinationPath work/portable-test
+          ./scripts/test-windows.ps1 -PackageRoot work/portable-test/TextMask-2.0.0-windows-x64

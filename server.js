@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { readdirSync, statSync } from 'node:fs';
 
 const files = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
@@ -8,11 +9,19 @@ const files = new Map([
   ['/src/app.js', ['src/app.js', 'text/javascript; charset=utf-8']],
   ['/src/mask.js', ['src/mask.js', 'text/javascript; charset=utf-8']],
   ['/src/demo.js', ['src/demo.js', 'text/javascript; charset=utf-8']],
+  ['/src/files.js', ['src/files.js', 'text/javascript; charset=utf-8']],
+  ['/src/docx-worker.js', ['src/docx-worker.js', 'text/javascript; charset=utf-8']],
   ['/favicon.svg', ['favicon.svg', 'image/svg+xml']],
 ]);
+for (const path of readdirSync(new URL('./vendor/', import.meta.url), { recursive: true })) {
+  const normalized = path.replaceAll('\\', '/');
+  if (!statSync(new URL(`./vendor/${normalized}`, import.meta.url)).isFile()) continue;
+  const mime = /\.m?js$/.test(normalized) ? 'text/javascript; charset=utf-8' : /\.wasm$/.test(normalized) ? 'application/wasm' : 'application/octet-stream';
+  files.set(`/vendor/${normalized}`, [`vendor/${normalized}`, mime]);
+}
 const headers = {
   'Cache-Control': 'no-store',
-  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+  'Content-Security-Policy': "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self'; img-src 'self' blob: data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'no-referrer',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',

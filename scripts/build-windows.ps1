@@ -1,5 +1,12 @@
 param([string]$NodeArchive)
 $ErrorActionPreference = 'Stop'
+function Get-Sha256([string]$FilePath) {
+    # .NET works even when PowerShell 5.1 inherits a PowerShell 7 module path.
+    $stream = [IO.File]::OpenRead($FilePath)
+    $algorithm = [Security.Cryptography.SHA256]::Create()
+    try { return [BitConverter]::ToString($algorithm.ComputeHash($stream)).Replace('-','').ToLowerInvariant() }
+    finally { $algorithm.Dispose(); $stream.Dispose() }
+}
 $root = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $version = (Get-Content -LiteralPath (Join-Path $root 'package.json') -Raw | ConvertFrom-Json).version
 if ($version -ne '2.0.0') { throw 'Update launcher version, quickstart and build metadata together.' }
@@ -22,7 +29,7 @@ try {
         }
     }
     $NodeArchive = (Resolve-Path -LiteralPath $NodeArchive).Path
-    if ((Get-FileHash -LiteralPath $NodeArchive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $archiveHash) {
+    if ((Get-Sha256 $NodeArchive) -ne $archiveHash) {
         throw 'Node archive SHA256 mismatch. Refusing to package it.'
     }
     Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -75,10 +82,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Launcher compilation failed.' }
     @{
         application = 'TextMask'; version = $version; platform = 'windows-x64';
-        runtime = @{ version = $nodeVersion; source = $source; archiveSha256 = $archiveHash; binarySha256 = (Get-FileHash (Join-Path $package 'runtime/node.exe') -Algorithm SHA256).Hash.ToLowerInvariant() }
+        runtime = @{ version = $nodeVersion; source = $source; archiveSha256 = $archiveHash; binarySha256 = (Get-Sha256 (Join-Path $package 'runtime/node.exe')) }
     } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $package 'BUILD.json') -Encoding UTF8
     $fileHashes = Get-ChildItem -LiteralPath $package -Recurse -File | Sort-Object FullName | ForEach-Object {
-        (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() + '  ' + $_.FullName.Substring($package.Length + 1).Replace('\','/')
+        (Get-Sha256 $_.FullName) + '  ' + $_.FullName.Substring($package.Length + 1).Replace('\','/')
     }
     $fileHashes | Set-Content -LiteralPath (Join-Path $package 'FILES.sha256') -Encoding UTF8
     $zipPath = Join-Path $dist "$packageName.zip"
@@ -89,7 +96,7 @@ try {
     try { $zip.GetEntry('TextMask.ico').Delete() } finally { $zip.Dispose() }
     Move-Item -LiteralPath "$zipPath.tmp" -Destination $zipPath
     Write-Output "Built $zipPath"
-    Get-FileHash -LiteralPath $zipPath -Algorithm SHA256 | Format-List
+    Write-Output ("SHA256 " + (Get-Sha256 $zipPath))
 } finally {
     $resolvedStage = [IO.Path]::GetFullPath($stage)
     if ($resolvedStage.StartsWith([IO.Path]::GetFullPath($dist) + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
